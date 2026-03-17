@@ -1,12 +1,304 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8">
-    <title>Mi primera página</title>
-    <link rel="stylesheet" href="estilo.css">
-  </head>
-  <body>
-    <h1>Hola mundo</h1>
-    <p>Esta es mi primera página web.</p>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BRITE — Bazar de Ropa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+  <!-- ══ NAV ══ -->
+  <header id="header">
+    <nav class="nav-inner">
+      <div class="nav-left">
+        <button class="nav-menu-btn" onclick="toggleMenu()" aria-label="Menú">
+          <span></span><span></span>
+        </button>
+      </div>
+      <a class="nav-brand" href="#">BRITE</a>
+      <div class="nav-right">
+        <a class="nav-wa" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20quiero%20ver%20el%20catálogo" target="_blank">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#novedades" onclick="toggleMenu()">Novedades</a>
+      <a href="#categorias" onclick="toggleMenu()">Categorías</a>
+      <a href="#catalogo" onclick="toggleMenu()">Catálogo</a>
+      <a href="#contacto" onclick="toggleMenu()">Contacto</a>
+    </div>
+  </header>
+
+  <!-- ══ HERO ══ -->
+  <section class="hero" id="inicio">
+    <div class="hero-content">
+      <span class="hero-tag">Nueva temporada · Bazar en línea</span>
+      <h1 class="hero-title">Segunda mano,<br><em>primer amor.</em></h1>
+      <p class="hero-desc">Prendas seleccionadas con cuidado. Cada pieza es única — encuéntrala antes que alguien más.</p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20quiero%20ver%20las%20prendas%20disponibles" target="_blank">Ver catálogo</a>
+        <a class="btn-ghost" href="#categorias">Explorar</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card hc1">
+        <div class="hero-card-img img-placeholder">
+          <span>Foto de prenda</span>
+        </div>
+        <p class="hc-label">Vestido · Disponible</p>
+      </div>
+      <div class="hero-card hc2">
+        <div class="hero-card-img img-placeholder">
+          <span>Foto de prenda</span>
+        </div>
+        <p class="hc-label">Blusa · Disponible</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ NOVEDADES BANNER ══ -->
+  <section class="ticker-wrap" id="novedades">
+    <div class="ticker">
+      <span>NOVEDADES · SEGUNDA MANO · PIEZAS ÚNICAS · MODA CONSCIENTE · PRECIOS ACCESIBLES · BRITE BAZAR · </span>
+      <span>NOVEDADES · SEGUNDA MANO · PIEZAS ÚNICAS · MODA CONSCIENTE · PRECIOS ACCESIBLES · BRITE BAZAR · </span>
+    </div>
+  </section>
+
+  <!-- ══ CATEGORÍAS ══ -->
+  <section class="categorias" id="categorias">
+    <div class="section-head">
+      <p class="section-tag">Explorar por</p>
+      <h2>Categorías</h2>
+    </div>
+    <div class="cat-grid">
+      <a class="cat-item" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesan%20los%20vestidos" target="_blank">
+        <div class="cat-img img-placeholder"><span>Vestidos</span></div>
+        <div class="cat-info">
+          <h3>Vestidos</h3>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a class="cat-item" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesan%20los%20tops%20y%20blusas" target="_blank">
+        <div class="cat-img img-placeholder"><span>Tops</span></div>
+        <div class="cat-info">
+          <h3>Tops y blusas</h3>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a class="cat-item" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesan%20los%20pantalones" target="_blank">
+        <div class="cat-img img-placeholder"><span>Pantalones</span></div>
+        <div class="cat-info">
+          <h3>Pantalones</h3>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a class="cat-item" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesan%20los%20abrigos" target="_blank">
+        <div class="cat-img img-placeholder"><span>Abrigos</span></div>
+        <div class="cat-info">
+          <h3>Abrigos y chamarras</h3>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a class="cat-item" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesan%20los%20accesorios" target="_blank">
+        <div class="cat-img img-placeholder"><span>Accesorios</span></div>
+        <div class="cat-info">
+          <h3>Accesorios</h3>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+      <a class="cat-item" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20quiero%20ver%20todo%20el%20catálogo" target="_blank">
+        <div class="cat-img cat-all"><span>Ver todo →</span></div>
+        <div class="cat-info">
+          <h3>Todo el catálogo</h3>
+          <span class="cat-arrow">→</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ══ CATÁLOGO / GRID ══ -->
+  <section class="catalogo" id="catalogo">
+    <div class="section-head">
+      <p class="section-tag">Disponibles ahora</p>
+      <h2>Prendas destacadas</h2>
+    </div>
+
+    <div class="product-grid">
+
+      <div class="product-card">
+        <div class="product-img img-placeholder">
+          <span>Aquí va<br>foto de prenda</span>
+          <span class="badge">Única</span>
+        </div>
+        <div class="product-info">
+          <p class="product-name">Nombre de la prenda</p>
+          <p class="product-cat">Categoría · Talla</p>
+          <a class="product-btn" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesa%20esta%20prenda" target="_blank">Preguntar precio</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img img-placeholder">
+          <span>Aquí va<br>foto de prenda</span>
+          <span class="badge">Única</span>
+        </div>
+        <div class="product-info">
+          <p class="product-name">Nombre de la prenda</p>
+          <p class="product-cat">Categoría · Talla</p>
+          <a class="product-btn" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesa%20esta%20prenda" target="_blank">Preguntar precio</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img img-placeholder">
+          <span>Aquí va<br>foto de prenda</span>
+          <span class="badge">Única</span>
+        </div>
+        <div class="product-info">
+          <p class="product-name">Nombre de la prenda</p>
+          <p class="product-cat">Categoría · Talla</p>
+          <a class="product-btn" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesa%20esta%20prenda" target="_blank">Preguntar precio</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img img-placeholder">
+          <span>Aquí va<br>foto de prenda</span>
+          <span class="badge">Única</span>
+        </div>
+        <div class="product-info">
+          <p class="product-name">Nombre de la prenda</p>
+          <p class="product-cat">Categoría · Talla</p>
+          <a class="product-btn" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesa%20esta%20prenda" target="_blank">Preguntar precio</a>
+        </div>
+      </div>
+
+      <div class="product-card product-card--wide">
+        <div class="product-img img-placeholder">
+          <span>Foto destacada</span>
+          <span class="badge badge--dark">Nueva llegada</span>
+        </div>
+        <div class="product-info">
+          <p class="product-name">Nombre de la prenda</p>
+          <p class="product-cat">Categoría · Talla</p>
+          <a class="product-btn" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesa%20esta%20prenda" target="_blank">Preguntar precio</a>
+        </div>
+      </div>
+
+      <div class="product-card">
+        <div class="product-img img-placeholder">
+          <span>Aquí va<br>foto de prenda</span>
+          <span class="badge">Única</span>
+        </div>
+        <div class="product-info">
+          <p class="product-name">Nombre de la prenda</p>
+          <p class="product-cat">Categoría · Talla</p>
+          <a class="product-btn" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20me%20interesa%20esta%20prenda" target="_blank">Preguntar precio</a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="catalogo-cta">
+      <a class="btn-primary" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20quiero%20ver%20todo%20el%20catálogo%20disponible" target="_blank">Ver todo en WhatsApp</a>
+    </div>
+  </section>
+
+  <!-- ══ CÓMO FUNCIONA ══ -->
+  <section class="como">
+    <div class="section-head">
+      <p class="section-tag">Simple y directo</p>
+      <h2>¿Cómo comprar?</h2>
+    </div>
+    <div class="como-steps">
+      <div class="step">
+        <span class="step-num">01</span>
+        <h3>Escríbenos</h3>
+        <p>Mándanos un mensaje por WhatsApp diciendo qué tipo de prenda buscas o que quieres ver el catálogo completo.</p>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <span class="step-num">02</span>
+        <h3>Te mostramos</h3>
+        <p>Te enviamos fotos de lo disponible ese día. Todo es segunda mano, así que las piezas cambian constantemente.</p>
+      </div>
+      <div class="step-line"></div>
+      <div class="step">
+        <span class="step-num">03</span>
+        <h3>Coordinamos</h3>
+        <p>Acordamos precio, forma de pago y entrega. Rápido, sin complicaciones, trato directo.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ CONTACTO ══ -->
+  <section class="contacto" id="contacto">
+    <div class="contacto-inner">
+      <div class="contacto-text">
+        <p class="section-tag">Atención directa</p>
+        <h2>Hablemos</h2>
+        <p class="contacto-desc">Respondemos rápido. Escríbenos por WhatsApp para ver disponibilidad, precios y coordinar tu compra.</p>
+        <div class="contacto-dato">
+          <span class="dato-label">WhatsApp</span>
+          <span class="dato-val">+52 1 238 116 0056</span>
+        </div>
+        <div class="contacto-dato">
+          <span class="dato-label">Horario</span>
+          <span class="dato-val">Lunes a sábado · 9am – 8pm</span>
+        </div>
+        <div class="contacto-dato">
+          <span class="dato-label">Modalidad</span>
+          <span class="dato-val">Bazar en línea · Envíos y entrega</span>
+        </div>
+      </div>
+      <div class="contacto-action">
+        <div class="wa-card">
+          <div class="wa-icon">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </div>
+          <p class="wa-title">Escríbenos ahora</p>
+          <p class="wa-sub">Te respondemos en minutos</p>
+          <a class="btn-wa" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20quiero%20ver%20el%20catálogo%20de%20ropa" target="_blank">Abrir WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <p class="footer-logo">BRITE</p>
+        <p class="footer-slogan">Bazar de ropa de segunda mano</p>
+      </div>
+      <div class="footer-links">
+        <a href="#inicio">Inicio</a>
+        <a href="#categorias">Categorías</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#contacto">Contacto</a>
+      </div>
+      <div class="footer-contact">
+        <p>+52 1 238 116 0056</p>
+        <a href="https://wa.me/5212381160056" target="_blank">WhatsApp</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 BRITE — Todos los derechos reservados</p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp flotante -->
+  <a class="wa-float" href="https://wa.me/5212381160056?text=Hola%20BRITE%2C%20quiero%20ver%20el%20catálogo" target="_blank" aria-label="WhatsApp">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script src="script.js"></script>
+</body>
 </html>
