@@ -3,6 +3,23 @@ var ENVIO_GRATIS_DESDE = 800;
 var COSTO_ENVIO = 59;
 var WA_NUM = '5212381160056';
 
+// ══ Supabase ══
+var SUPABASE_URL = 'https://gcvsiyqjhkzltgjnrzdo.supabase.co';
+var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdnNpeXFqaGt6bHRnam5yemRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzI4NTAsImV4cCI6MjA4OTQ0ODg1MH0.TVs1GYMi550A73De3-9ceiu45VswZmbYDJW1oNvcSv0';
+
+function sbFetch(endpoint, method, body) {
+  return fetch(SUPABASE_URL + '/rest/v1/' + endpoint, {
+    method: method || 'GET',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': method === 'POST' ? 'return=representation' : ''
+    },
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(r) { return r.json(); });
+}
+
 // ══ Estado ══
 var carrito = [];
 
@@ -234,6 +251,30 @@ function confirmarPedido() {
     + '\n\n💳 Pago: Transferencia SPEI'
     + '\n\n_(Favor de enviar datos bancarios para realizar el pago)_';
 
+  // Guardar pedido en Supabase
+  sbFetch('pedidos', 'POST', {
+    usuaria_id: usuarioActual ? usuarioActual.id : null,
+    nombre_cliente: nombre,
+    email: email || 'No proporcionado',
+    whatsapp: tel,
+    direccion: calle,
+    ciudad: ciudad,
+    estado: estado,
+    codigo_postal: cp,
+    productos: carrito.map(function(i) {
+      return { nombre: i.nombre, precio: i.precio, imagen: i.img };
+    }),
+    subtotal: subtotal,
+    envio: envio,
+    total: total,
+    metodo_pago: 'SPEI',
+    estatus: 'pendiente'
+  }).then(function() {
+    console.log('Pedido guardado en Supabase');
+  }).catch(function(err) {
+    console.log('Error guardando pedido:', err);
+  });
+
   window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg), '_blank');
   cerrarCheckout();
   carrito = [];
@@ -454,19 +495,15 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
 });
 
 // ══════════════════════════════
-//  AUTH SYSTEM — LOGIN / SIGNUP
+//  AUTH SYSTEM — SUPABASE
 // ══════════════════════════════
 
-// Estado del usuario (localStorage para persistencia)
 var usuarioActual = null;
 
 function cargarUsuario() {
   try {
     var data = localStorage.getItem('brite_user');
-    if (data) {
-      usuarioActual = JSON.parse(data);
-      actualizarUIUsuario();
-    }
+    if (data) { usuarioActual = JSON.parse(data); actualizarUIUsuario(); }
   } catch(e) {}
 }
 
@@ -481,19 +518,11 @@ function actualizarUIUsuario() {
   if (dot) dot.style.display = usuarioActual ? 'block' : 'none';
 }
 
-// Abrir / cerrar modal
 function abrirAuth() {
-  var modal = document.getElementById('authModal');
-  var overlay = document.getElementById('authOverlay');
-  modal.classList.add('open');
-  overlay.classList.add('open');
+  document.getElementById('authModal').classList.add('open');
+  document.getElementById('authOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-
-  if (usuarioActual) {
-    mostrarFormulario('Perfil');
-  } else {
-    switchTab('login');
-  }
+  if (usuarioActual) { mostrarFormulario('Perfil'); } else { switchTab('login'); }
 }
 
 function cerrarAuth() {
@@ -502,21 +531,17 @@ function cerrarAuth() {
   document.body.style.overflow = '';
 }
 
-// Tabs
 function switchTab(tab) {
   var ind = document.getElementById('tabIndicator');
   var tabLogin = document.getElementById('tabLogin');
   var tabReg = document.getElementById('tabRegister');
-
   if (tab === 'login') {
     mostrarFormulario('Login');
-    tabLogin.classList.add('active');
-    tabReg.classList.remove('active');
+    tabLogin.classList.add('active'); tabReg.classList.remove('active');
     if (ind) ind.classList.remove('right');
   } else {
     mostrarFormulario('Register');
-    tabReg.classList.add('active');
-    tabLogin.classList.remove('active');
+    tabReg.classList.add('active'); tabLogin.classList.remove('active');
     if (ind) ind.classList.add('right');
   }
 }
@@ -528,8 +553,6 @@ function mostrarFormulario(nombre) {
   });
   var target = document.getElementById('form' + nombre);
   if (target) target.style.display = 'block';
-
-  // Actualizar perfil si está logueado
   if (nombre === 'Perfil' && usuarioActual) {
     var initial = (usuarioActual.nombre || 'B')[0].toUpperCase();
     var avatarEl = document.getElementById('perfilAvatar');
@@ -543,48 +566,42 @@ function mostrarFormulario(nombre) {
     if (pedidosEl) pedidosEl.textContent = usuarioActual.pedidos || 0;
     if (carritoEl) carritoEl.textContent = carrito.length;
   }
-
-  // Ocultar tabs si es perfil
   var tabs = document.querySelector('.auth-tabs');
   if (tabs) tabs.style.display = nombre === 'Perfil' ? 'none' : 'flex';
 }
 
-// Iniciar sesión
+// ── Iniciar sesión con Supabase ──
 function iniciarSesion() {
   var email = document.getElementById('loginEmail').value.trim();
   var pass  = document.getElementById('loginPass').value;
-
   if (!email || !pass) { mostrarToast('Por favor llena todos los campos'); return; }
   if (!validarEmail(email)) { mostrarToast('Ingresa un correo válido'); return; }
 
-  // Verificar si existe en localStorage
-  var usuarios = JSON.parse(localStorage.getItem('brite_usuarios') || '[]');
-  var user = usuarios.find(function(u) { return u.email === email && u.pass === btoa(pass); });
+  var btn = document.querySelector('#formLogin .auth-btn');
+  if (btn) { btn.disabled = true; btn.querySelector('span').textContent = 'Verificando...'; }
 
-  if (user) {
-    guardarUsuario(user);
-    cerrarAuth();
-    mostrarToast('¡Bienvenida de vuelta, ' + user.nombre.split(' ')[0] + '! ✦');
-  } else {
-    mostrarToast('Correo o contraseña incorrectos');
-    var wrap = document.querySelector('#formLogin .auth-input-wrap:last-of-type');
-    if (wrap) { wrap.style.borderColor = '#E53935'; setTimeout(function() { wrap.style.borderColor = ''; }, 1500); }
-  }
+  sbFetch('usuarias?email=eq.' + encodeURIComponent(email) + '&select=*')
+    .then(function(data) {
+      if (data && data.length > 0) {
+        var user = data[0];
+        if (user.password_hash === btoa(pass)) {
+          guardarUsuario(user);
+          cerrarAuth();
+          mostrarToast('¡Bienvenida de vuelta, ' + user.nombre.split(' ')[0] + '! ✦');
+        } else {
+          mostrarToast('Contraseña incorrecta');
+        }
+      } else {
+        mostrarToast('No encontramos esa cuenta');
+      }
+    })
+    .catch(function() { mostrarToast('Error de conexión, intenta de nuevo'); })
+    .finally(function() {
+      if (btn) { btn.disabled = false; btn.querySelector('span').textContent = 'Entrar'; }
+    });
 }
 
-// ══ Google Sheets — envío via imagen (evita CORS) ══
-var SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwPxN7qRp2ZuUDZg5q4D2EY0MMZojDIl-IXUCcxGAGooGnwfBRlRdRlN0YjMo0xOYTyqA/exec';
-
-function enviarASheets(datos) {
-  // Técnica GET con imagen — bypasea CORS completamente
-  var params = Object.keys(datos).map(function(k) {
-    return encodeURIComponent(k) + '=' + encodeURIComponent(datos[k]);
-  }).join('&');
-  var img = new Image();
-  img.src = SHEETS_URL + '?' + params;
-}
-
-// Registrar usuario
+// ── Registrar usuaria en Supabase ──
 function registrarUsuario() {
   var nombre = document.getElementById('regNombre').value.trim();
   var email  = document.getElementById('regEmail').value.trim();
@@ -596,40 +613,31 @@ function registrarUsuario() {
   if (!validarEmail(email)) { mostrarToast('Ingresa un correo electrónico válido'); return; }
   if (pass.length < 6) { mostrarToast('La contraseña debe tener al menos 6 caracteres'); return; }
 
-  var usuarios = JSON.parse(localStorage.getItem('brite_usuarios') || '[]');
-  if (usuarios.find(function(u) { return u.email === email; })) {
-    mostrarToast('Ese correo ya está registrado'); return;
-  }
-
-  // Cambiar texto del botón
   var btn = document.querySelector('#formRegister .auth-btn');
   if (btn) { btn.disabled = true; btn.querySelector('span').textContent = 'Creando cuenta...'; }
 
-  // Enviar a Google Sheets
-  enviarASheets({
-    fecha: new Date().toLocaleString('es-MX'),
+  sbFetch('usuarias', 'POST', {
     nombre: nombre,
-    correo: email,
+    email: email,
+    password_hash: btoa(pass),
     whatsapp: wa || 'No proporcionado',
-    acepta_noticias: acepta ? 'Sí' : 'No',
+    acepta_noticias: acepta,
     dispositivo: /Mobi|Android/i.test(navigator.userAgent) ? 'Móvil' : 'Escritorio'
-  });
-
-  // Guardar localmente y confirmar
-  setTimeout(function() {
-    var nuevoUsuario = {
-      nombre: nombre, email: email,
-      pass: btoa(pass), wa: wa,
-      pedidos: 0,
-      fechaRegistro: new Date().toLocaleDateString('es-MX')
-    };
-    usuarios.push(nuevoUsuario);
-    localStorage.setItem('brite_usuarios', JSON.stringify(usuarios));
-    guardarUsuario(nuevoUsuario);
+  }).then(function(data) {
+    if (data && data[0]) {
+      guardarUsuario(data[0]);
+      cerrarAuth();
+      mostrarToast('¡Cuenta creada! Bienvenida a BRITE ✦');
+    } else if (data && data.code === '23505') {
+      mostrarToast('Ese correo ya está registrado');
+    } else {
+      mostrarToast('Error al crear cuenta, intenta de nuevo');
+    }
+  }).catch(function() {
+    mostrarToast('Error de conexión, intenta de nuevo');
+  }).finally(function() {
     if (btn) { btn.disabled = false; btn.querySelector('span').textContent = 'Crear mi cuenta'; }
-    cerrarAuth();
-    mostrarToast('¡Cuenta creada! Bienvenida a BRITE ✦');
-  }, 1200);
+  });
 }
 
 // Cerrar sesión
@@ -639,6 +647,13 @@ function cerrarSesion() {
   actualizarUIUsuario();
   cerrarAuth();
   mostrarToast('Sesión cerrada. ¡Hasta pronto!');
+}
+
+// ── Guardar pedido en Supabase ──
+function guardarPedidoEnSupabase(datosPedido) {
+  sbFetch('pedidos', 'POST', datosPedido)
+    .then(function() { console.log('Pedido guardado en Supabase'); })
+    .catch(function() { console.log('Error guardando pedido'); });
 }
 
 // Fortaleza contraseña
