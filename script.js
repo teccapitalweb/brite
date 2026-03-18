@@ -452,3 +452,196 @@ document.querySelectorAll('a[href^="#"]').forEach(function(link) {
     window.scrollTo({ top: top, behavior: 'smooth' });
   });
 });
+
+// ══════════════════════════════
+//  AUTH SYSTEM — LOGIN / SIGNUP
+// ══════════════════════════════
+
+// Estado del usuario (localStorage para persistencia)
+var usuarioActual = null;
+
+function cargarUsuario() {
+  try {
+    var data = localStorage.getItem('brite_user');
+    if (data) {
+      usuarioActual = JSON.parse(data);
+      actualizarUIUsuario();
+    }
+  } catch(e) {}
+}
+
+function guardarUsuario(user) {
+  usuarioActual = user;
+  localStorage.setItem('brite_user', JSON.stringify(user));
+  actualizarUIUsuario();
+}
+
+function actualizarUIUsuario() {
+  var dot = document.getElementById('userDot');
+  if (dot) dot.style.display = usuarioActual ? 'block' : 'none';
+}
+
+// Abrir / cerrar modal
+function abrirAuth() {
+  var modal = document.getElementById('authModal');
+  var overlay = document.getElementById('authOverlay');
+  modal.classList.add('open');
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  if (usuarioActual) {
+    mostrarFormulario('Perfil');
+  } else {
+    switchTab('login');
+  }
+}
+
+function cerrarAuth() {
+  document.getElementById('authModal').classList.remove('open');
+  document.getElementById('authOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Tabs
+function switchTab(tab) {
+  var ind = document.getElementById('tabIndicator');
+  var tabLogin = document.getElementById('tabLogin');
+  var tabReg = document.getElementById('tabRegister');
+
+  if (tab === 'login') {
+    mostrarFormulario('Login');
+    tabLogin.classList.add('active');
+    tabReg.classList.remove('active');
+    if (ind) ind.classList.remove('right');
+  } else {
+    mostrarFormulario('Register');
+    tabReg.classList.add('active');
+    tabLogin.classList.remove('active');
+    if (ind) ind.classList.add('right');
+  }
+}
+
+function mostrarFormulario(nombre) {
+  ['formLogin','formRegister','formPerfil'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  var target = document.getElementById('form' + nombre);
+  if (target) target.style.display = 'block';
+
+  // Actualizar perfil si está logueado
+  if (nombre === 'Perfil' && usuarioActual) {
+    var initial = (usuarioActual.nombre || 'B')[0].toUpperCase();
+    var avatarEl = document.getElementById('perfilAvatar');
+    var nombreEl = document.getElementById('perfilNombre');
+    var emailEl  = document.getElementById('perfilEmail');
+    var pedidosEl = document.getElementById('perfilPedidos');
+    var carritoEl = document.getElementById('perfilCarrito');
+    if (avatarEl) avatarEl.textContent = initial;
+    if (nombreEl) nombreEl.textContent = '¡Hola, ' + usuarioActual.nombre.split(' ')[0] + '!';
+    if (emailEl)  emailEl.textContent  = usuarioActual.email;
+    if (pedidosEl) pedidosEl.textContent = usuarioActual.pedidos || 0;
+    if (carritoEl) carritoEl.textContent = carrito.length;
+  }
+
+  // Ocultar tabs si es perfil
+  var tabs = document.querySelector('.auth-tabs');
+  if (tabs) tabs.style.display = nombre === 'Perfil' ? 'none' : 'flex';
+}
+
+// Iniciar sesión
+function iniciarSesion() {
+  var email = document.getElementById('loginEmail').value.trim();
+  var pass  = document.getElementById('loginPass').value;
+
+  if (!email || !pass) { mostrarToast('Por favor llena todos los campos'); return; }
+  if (!validarEmail(email)) { mostrarToast('Ingresa un correo válido'); return; }
+
+  // Verificar si existe en localStorage
+  var usuarios = JSON.parse(localStorage.getItem('brite_usuarios') || '[]');
+  var user = usuarios.find(function(u) { return u.email === email && u.pass === btoa(pass); });
+
+  if (user) {
+    guardarUsuario(user);
+    cerrarAuth();
+    mostrarToast('¡Bienvenida de vuelta, ' + user.nombre.split(' ')[0] + '! ✦');
+  } else {
+    mostrarToast('Correo o contraseña incorrectos');
+    var wrap = document.querySelector('#formLogin .auth-input-wrap:last-of-type');
+    if (wrap) { wrap.style.borderColor = '#E53935'; setTimeout(function() { wrap.style.borderColor = ''; }, 1500); }
+  }
+}
+
+// Registrar usuario
+function registrarUsuario() {
+  var nombre = document.getElementById('regNombre').value.trim();
+  var email  = document.getElementById('regEmail').value.trim();
+  var pass   = document.getElementById('regPass').value;
+  var wa     = document.getElementById('regWa').value.trim();
+
+  if (!nombre || !email || !pass) { mostrarToast('Por favor llena los campos obligatorios'); return; }
+  if (!validarEmail(email)) { mostrarToast('Ingresa un correo electrónico válido'); return; }
+  if (pass.length < 6) { mostrarToast('La contraseña debe tener al menos 6 caracteres'); return; }
+
+  var usuarios = JSON.parse(localStorage.getItem('brite_usuarios') || '[]');
+  if (usuarios.find(function(u) { return u.email === email; })) {
+    mostrarToast('Ese correo ya está registrado'); return;
+  }
+
+  var nuevoUsuario = { nombre: nombre, email: email, pass: btoa(pass), wa: wa, pedidos: 0, fechaRegistro: new Date().toLocaleDateString('es-MX') };
+  usuarios.push(nuevoUsuario);
+  localStorage.setItem('brite_usuarios', JSON.stringify(usuarios));
+
+  guardarUsuario(nuevoUsuario);
+  cerrarAuth();
+  mostrarToast('¡Cuenta creada! Bienvenida a BRITE ✦');
+}
+
+// Cerrar sesión
+function cerrarSesion() {
+  usuarioActual = null;
+  localStorage.removeItem('brite_user');
+  actualizarUIUsuario();
+  cerrarAuth();
+  mostrarToast('Sesión cerrada. ¡Hasta pronto!');
+}
+
+// Fortaleza contraseña
+document.addEventListener('DOMContentLoaded', function() {
+  cargarUsuario();
+  var passInput = document.getElementById('regPass');
+  if (passInput) {
+    passInput.addEventListener('input', function() {
+      var val = this.value;
+      var bar  = document.getElementById('passBar');
+      var hint = document.getElementById('passHint');
+      if (!bar || !hint) return;
+      var score = 0;
+      if (val.length >= 6) score++;
+      if (val.length >= 10) score++;
+      if (/[A-Z]/.test(val)) score++;
+      if (/[0-9]/.test(val)) score++;
+      if (/[^A-Za-z0-9]/.test(val)) score++;
+      var colors = ['#E53935','#FF9800','#FFC107','#4CAF50','#00BCD4'];
+      var labels = ['Muy débil','Débil','Regular','Buena','Excelente'];
+      bar.style.width = (score * 20) + '%';
+      bar.style.background = colors[score - 1] || 'transparent';
+      hint.textContent = score > 0 ? labels[score - 1] : '';
+      hint.style.color = colors[score - 1] || 'transparent';
+    });
+  }
+});
+
+// Mostrar/ocultar contraseña
+function togglePassword(id, btn) {
+  var input = document.getElementById(id);
+  if (!input) return;
+  var isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  btn.style.color = isText ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.7)';
+}
+
+// Validar email
+function validarEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
