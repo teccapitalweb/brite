@@ -427,7 +427,10 @@ footer {
 }
 
 @media (max-width: 640px) {
-  .nav-inner { padding: 0 20px; }
+  .nav-inner { padding: 0 16px; }
+  .nav-wa-text { display: none; }
+  .nav-brand { font-size: 20px; letter-spacing: 0.18em; }
+  .nav-right { gap: 10px; }
   .hero { padding: calc(var(--nav-h) + 24px) 20px 48px; }
   .hero-visual { display: none; }
   .cat-grid { grid-template-columns: 1fr; }
