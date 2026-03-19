@@ -5,7 +5,7 @@ var WA_NUM = '5212381160056';
 
 // ══ Supabase ══
 var SUPABASE_URL = 'https://gcvsiyqjhkzltgjnrzdo.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdnNpeXFqaGt6bHRnam5yemRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzI4NTAsImV4cCI6MjA4OTQ0ODg1MH0.TVs1GYMi550A73De3-9ceiu45VswZmbYDJW1oNvcSv0';
+var SUPABASE_KEY = 'sb_publishable_KwKVAkqm3eV2EZxCNAKg_w_mpZv-9FO';
 
 function sbFetch(endpoint, method, body) {
   var options = {
