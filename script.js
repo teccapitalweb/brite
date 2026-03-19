@@ -8,16 +8,35 @@ var SUPABASE_URL = 'https://gcvsiyqjhkzltgjnrzdo.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdjdnNpeXFqaGt6bHRnam5yemRvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NzI4NTAsImV4cCI6MjA4OTQ0ODg1MH0.TVs1GYMi550A73De3-9ceiu45VswZmbYDJW1oNvcSv0';
 
 function sbFetch(endpoint, method, body) {
-  return fetch(SUPABASE_URL + '/rest/v1/' + endpoint, {
+  var options = {
     method: method || 'GET',
     headers: {
       'apikey': SUPABASE_KEY,
       'Authorization': 'Bearer ' + SUPABASE_KEY,
       'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'return=representation' : ''
-    },
-    body: body ? JSON.stringify(body) : undefined
-  }).then(function(r) { return r.json(); });
+      'Accept': 'application/json'
+    }
+  };
+  if (method === 'POST') {
+    options.headers['Prefer'] = 'return=representation';
+  }
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
+  return fetch(SUPABASE_URL + '/rest/v1/' + endpoint, options)
+    .then(function(r) {
+      if (!r.ok) {
+        return r.json().then(function(err) {
+          console.error('Supabase error:', err);
+          return err;
+        });
+      }
+      return r.json();
+    })
+    .catch(function(err) {
+      console.error('Fetch error:', err);
+      return null;
+    });
 }
 
 // ══ Estado ══
