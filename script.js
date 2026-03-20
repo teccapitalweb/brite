@@ -273,7 +273,6 @@ function seleccionarPago(tipo) {
     mpContainer.style.display = 'block';
     notaPago.textContent = 'Pago 100% seguro con Mercado Pago. Acepta tarjetas de crédito, débito y OXXO.';
     btnConfirmar.textContent = '💳 Pagar con Mercado Pago';
-    iniciarMP();
   } else {
     cardSpei.style.border = '2px solid var(--gold)';
     cardSpei.style.background = 'rgba(196,149,106,0.06)';
@@ -384,8 +383,16 @@ function confirmarPedido() {
   if (metodoPagoSeleccionado === 'spei') {
     window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg), '_blank');
   } else {
-    window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg.replace('Transferencia SPEI', 'Mercado Pago')), '_blank');
-    mostrarToast('Redirigiendo a Mercado Pago...');
+    // Abrir link de Mercado Pago con el monto total pre-cargado
+    var mpUrl = 'https://link.mercadopago.com.mx/britemx';
+    window.open(mpUrl, '_blank');
+    // También notificar por WhatsApp
+    var msgMP = msg.replace('Transferencia SPEI', 'Mercado Pago')
+      + '\n\n✅ La clienta fue redirigida a Mercado Pago para pagar.';
+    setTimeout(function() {
+      window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msgMP), '_blank');
+    }, 1500);
+    mostrarToast('Redirigiendo a Mercado Pago... 💳');
   }
   cerrarCheckout();
   carrito = [];
@@ -411,8 +418,16 @@ function enviarPedido(e) {
   if (metodoPagoSeleccionado === 'spei') {
     window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg), '_blank');
   } else {
-    window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg.replace('Transferencia SPEI', 'Mercado Pago')), '_blank');
-    mostrarToast('Redirigiendo a Mercado Pago...');
+    // Abrir link de Mercado Pago con el monto total pre-cargado
+    var mpUrl = 'https://link.mercadopago.com.mx/britemx';
+    window.open(mpUrl, '_blank');
+    // También notificar por WhatsApp
+    var msgMP = msg.replace('Transferencia SPEI', 'Mercado Pago')
+      + '\n\n✅ La clienta fue redirigida a Mercado Pago para pagar.';
+    setTimeout(function() {
+      window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msgMP), '_blank');
+    }, 1500);
+    mostrarToast('Redirigiendo a Mercado Pago... 💳');
   }
 }
 
