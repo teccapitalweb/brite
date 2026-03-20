@@ -1,6 +1,6 @@
 // ══ Config ══
 var ENVIO_GRATIS_DESDE = 800;
-var COSTO_ENVIO = 100;
+var COSTO_ENVIO = 80;
 var WA_NUM = '5212381160056';
 
 // ══ Supabase ══
@@ -403,7 +403,9 @@ function enviarPedido(e) {
     + '*Dirección:* ' + document.getElementById('direccion').value + ', '
     + document.getElementById('ciudad').value + ', '
     + document.getElementById('estado').value + ' CP '
-    + document.getElementById('cp').value;
+    + document.getElementById('cp').value
+    + '\n\n🚚 *Envío: $50 MXN* · Correos de México (7-15 días hábiles)'
+    + '\n💳 *Pago:* Transferencia SPEI (te enviamos datos bancarios)' ;
   var notas = document.getElementById('notas').value;
   if (notas) msg += '\n*Notas:* ' + notas;
   if (metodoPagoSeleccionado === 'spei') {
