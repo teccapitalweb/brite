@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="estilo.css">
+  <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
 
@@ -85,7 +86,7 @@
         </div>
         <div>
           <span class="hero-stat-num">2–5</span>
-          <span class="hero-stat-label">Días de entrega</span>
+          <span class="hero-stat-label">Días hábiles de entrega</span>
         </div>
         <div>
           <span class="hero-stat-num">100%</span>
@@ -888,8 +889,8 @@
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </div>
         <h3>Envíos a todo México</h3>
-        <p>Enviamos por paquetería a cualquier estado de la república. El costo de envío se calcula según tu ubicación.</p>
-        <span class="pago-tag">Entrega en 2–5 días hábiles</span>
+        <p>Enviamos por Correos de México a cualquier estado de la república. Costo de envío: $100 MXN.</p>
+        <span class="pago-tag">Entrega en 7–15 días hábiles</span>
       </div>
 
       <div class="pago-card reveal">
@@ -1042,7 +1043,21 @@
     <!-- PASO 3: Pago -->
     <div class="checkout-step" id="checkout-paso3" style="display:none">
       <h3>Método de pago</h3>
-      <div class="ch-pago-card">
+
+      <!-- Opción 1: Mercado Pago -->
+      <div class="ch-pago-card ch-pago-selectable" id="card-mp" onclick="seleccionarPago('mp')" style="border:2px solid var(--gold);background:rgba(196,149,106,0.06)">
+        <div class="ch-pago-icon" style="background:#009EE3;border-radius:8px;padding:4px">
+          <svg width="28" height="20" viewBox="0 0 80 50" fill="none"><path d="M40 5C20 5 5 18 5 25s15 20 35 20 35-13 35-20S60 5 40 5z" fill="#009EE3"/><path d="M25 25c0-8 7-14 15-14s15 6 15 14-7 14-15 14-15-6-15-14z" fill="white"/><path d="M35 21l3 5 7-8" stroke="#009EE3" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <p class="ch-pago-nombre">Mercado Pago</p>
+          <p class="ch-pago-desc">Tarjeta, débito, OXXO · Pago seguro</p>
+        </div>
+        <div class="ch-pago-check" id="check-mp">✓</div>
+      </div>
+
+      <!-- Opción 2: SPEI -->
+      <div class="ch-pago-card ch-pago-selectable" id="card-spei" onclick="seleccionarPago('spei')" style="margin-top:10px;border:2px solid transparent">
         <div class="ch-pago-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
         </div>
@@ -1050,18 +1065,25 @@
           <p class="ch-pago-nombre">Transferencia SPEI</p>
           <p class="ch-pago-desc">Sin comisiones · Cualquier banco mexicano</p>
         </div>
-        <div class="ch-pago-check">✓</div>
+        <div class="ch-pago-check" id="check-spei" style="opacity:0">✓</div>
       </div>
-      <div class="ch-banco-datos">
+
+      <!-- Info SPEI (oculto por defecto) -->
+      <div class="ch-banco-datos" id="datos-spei" style="display:none">
         <p class="ch-banco-title">Datos para tu transferencia</p>
         <p>Banco: <strong>BBVA</strong></p>
         <p>Titular: <strong>BRITE</strong></p>
         <p>CLABE: <strong>Te la enviamos por WhatsApp al confirmar</strong></p>
       </div>
-      <p class="ch-pago-nota">Al confirmar tu pedido recibirás un mensaje de WhatsApp con la CLABE para realizar tu transferencia. Una vez que nos envíes tu comprobante, procesamos y enviamos tu pedido.</p>
+
+      <!-- Contenedor Mercado Pago -->
+      <div id="mp-container" style="margin-top:16px"></div>
+
+      <p class="ch-pago-nota" id="nota-pago">Pago 100% seguro con Mercado Pago. Acepta tarjetas de crédito, débito y OXXO.</p>
+
       <div class="ch-actions">
         <button class="btn-ch-ghost" onclick="irPaso2()">← Atrás</button>
-        <button class="btn-ch-primary btn-confirmar" onclick="confirmarPedido()">✓ Confirmar pedido</button>
+        <button class="btn-ch-primary btn-confirmar" id="btn-confirmar-pago" onclick="confirmarPedido()">✓ Confirmar pedido</button>
       </div>
     </div>
 

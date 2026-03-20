@@ -1,6 +1,6 @@
 // ══ Config ══
 var ENVIO_GRATIS_DESDE = 800;
-var COSTO_ENVIO = 59;
+var COSTO_ENVIO = 100;
 var WA_NUM = '5212381160056';
 
 // ══ Supabase ══
@@ -240,6 +240,93 @@ function irPaso2() {
 
 function irPaso3() { mostrarPaso(3); }
 
+
+// ══════════════════════════════
+//  MERCADO PAGO
+// ══════════════════════════════
+var MP_PUBLIC_KEY = 'APP_USR-bccdacbe-8883-4eae-b57d-f486ee2bccbb';
+var metodoPagoSeleccionado = 'mp';
+var mpInstance = null;
+var mpCardForm = null;
+
+function seleccionarPago(tipo) {
+  metodoPagoSeleccionado = tipo;
+
+  // Actualizar UI
+  var cardMp = document.getElementById('card-mp');
+  var cardSpei = document.getElementById('card-spei');
+  var checkMp = document.getElementById('check-mp');
+  var checkSpei = document.getElementById('check-spei');
+  var datosSpei = document.getElementById('datos-spei');
+  var mpContainer = document.getElementById('mp-container');
+  var notaPago = document.getElementById('nota-pago');
+  var btnConfirmar = document.getElementById('btn-confirmar-pago');
+
+  if (tipo === 'mp') {
+    cardMp.style.border = '2px solid var(--gold)';
+    cardMp.style.background = 'rgba(196,149,106,0.06)';
+    cardSpei.style.border = '2px solid transparent';
+    cardSpei.style.background = 'transparent';
+    checkMp.style.opacity = '1';
+    checkSpei.style.opacity = '0';
+    datosSpei.style.display = 'none';
+    mpContainer.style.display = 'block';
+    notaPago.textContent = 'Pago 100% seguro con Mercado Pago. Acepta tarjetas de crédito, débito y OXXO.';
+    btnConfirmar.textContent = '💳 Pagar con Mercado Pago';
+    iniciarMP();
+  } else {
+    cardSpei.style.border = '2px solid var(--gold)';
+    cardSpei.style.background = 'rgba(196,149,106,0.06)';
+    cardMp.style.border = '2px solid transparent';
+    cardMp.style.background = 'transparent';
+    checkSpei.style.opacity = '1';
+    checkMp.style.opacity = '0';
+    datosSpei.style.display = 'block';
+    mpContainer.style.display = 'none';
+    mpContainer.innerHTML = '';
+    notaPago.textContent = 'Al confirmar tu pedido recibirás un mensaje de WhatsApp con la CLABE para realizar tu transferencia.';
+    btnConfirmar.textContent = '✓ Confirmar pedido';
+  }
+}
+
+function iniciarMP() {
+  var container = document.getElementById('mp-container');
+  if (!container) return;
+  container.innerHTML = '<div id="mp-brick-container"></div>';
+
+  if (!window.MercadoPago) {
+    container.innerHTML = '<p style="font-size:13px;color:var(--ink-mid);padding:16px;background:var(--bg-alt);border-radius:8px">Cargando Mercado Pago...</p>';
+    return;
+  }
+
+  try {
+    if (!mpInstance) mpInstance = new window.MercadoPago(MP_PUBLIC_KEY, { locale: 'es-MX' });
+    var bricks = mpInstance.bricks();
+    var subtotal = carrito.reduce(function(s, i) { return s + i.precio; }, 0);
+    var envio = subtotal >= ENVIO_GRATIS_DESDE ? 0 : COSTO_ENVIO;
+    var total = subtotal + envio;
+
+    bricks.create('wallet', 'mp-brick-container', {
+      initialization: {
+        preferenceId: null,
+        redirectMode: 'modal'
+      },
+      customization: {
+        texts: { action: 'pay', valueProp: 'security_details' }
+      },
+      callbacks: {
+        onReady: function() {},
+        onError: function(error) {
+          console.log('MP error:', error);
+          container.innerHTML = '<p style="font-size:13px;color:var(--ink-mid);padding:16px;background:var(--bg-alt);border-radius:8px;text-align:center">⚠️ Para activar pagos con tarjeta necesitas configurar tu servidor. Por ahora usa transferencia SPEI.</p>';
+        }
+      }
+    });
+  } catch(e) {
+    container.innerHTML = '<p style="font-size:13px;color:var(--ink-mid);padding:16px;background:var(--bg-alt);border-radius:8px;text-align:center">Para activar pagos con tarjeta completa la configuración de Mercado Pago.</p>';
+  }
+}
+
 function confirmarPedido() {
   var nombre = document.getElementById('ch-nombre').value.trim();
   var tel    = document.getElementById('ch-tel').value.trim();
@@ -294,7 +381,12 @@ function confirmarPedido() {
     console.log('Error guardando pedido:', err);
   });
 
-  window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg), '_blank');
+  if (metodoPagoSeleccionado === 'spei') {
+    window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg), '_blank');
+  } else {
+    window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg.replace('Transferencia SPEI', 'Mercado Pago')), '_blank');
+    mostrarToast('Redirigiendo a Mercado Pago...');
+  }
   cerrarCheckout();
   carrito = [];
   actualizarCarritoUI();
@@ -314,7 +406,12 @@ function enviarPedido(e) {
     + document.getElementById('cp').value;
   var notas = document.getElementById('notas').value;
   if (notas) msg += '\n*Notas:* ' + notas;
-  window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg), '_blank');
+  if (metodoPagoSeleccionado === 'spei') {
+    window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg), '_blank');
+  } else {
+    window.open('https://wa.me/' + WA_NUM + '?text=' + encodeURIComponent(msg.replace('Transferencia SPEI', 'Mercado Pago')), '_blank');
+    mostrarToast('Redirigiendo a Mercado Pago...');
+  }
 }
 
 // ══════════════════════════════
